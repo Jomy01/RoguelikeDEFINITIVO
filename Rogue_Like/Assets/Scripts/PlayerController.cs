@@ -14,14 +14,20 @@ public class PlayerController : MonoBehaviour
     //public GameObject gameManager;
     //gameManager = GameObject.FindWithTag ("GameController");
 
+    //creamos vable layermask para el raycast
+    public LayerMask mascararaycast;
+
     private int currentFoodPoints;
     private Animator animator;
+    //declaramos el collider para poder desactivarlo antes de lanzar el raycast y que no choque consigo mismo, lo activamos después de lanzarlo
+    private BoxCollider2D colaider;
 
     // Start is called before the first frame update
     void Start()
     {
         currentFoodPoints = gameManager.playerFood;//carga los putnos de comida iniciales
-        animator = GetComponent<Animator>(); 
+        animator = GetComponent<Animator>();
+        colaider = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -41,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void IntentarMoverme()
     {
-        //usamos getaxisRaw pq no queremos decimales
+        //usamos getaxisRaw pq no queremos decimales, toma valores enteros , -1, 0 o 1
         //nos quedaremos solo con mov vertical u horizontal, uno de los dos
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
@@ -59,11 +65,75 @@ public class PlayerController : MonoBehaviour
         if ( x != 0 || y != 0)
         {
             currentFoodPoints--;
-            //comprobar si me puedo mover, si puedo, me muevo; tal vez pueda destruir un muro
+            //comprobar si me puedo mover, si puedo, me muevo; tal vez pueda destruir un muro, le pasamos los valores de la x e y de IntentarMoverme, ya que hemos dicho que IsPossibleMove tiene dos variables
+           if( IsPossibleMove(x, y))
+            {
+                Debug.Log("Me puedo mover");
+                //Moverme(x, y)
+            }
+            else
+            {
+                Debug.Log("No me puedo mover");
+                //NomepuedoMover(x, y)
+            }
             ComprobarSiGameOver();
             gameManager.playerTurn = false;
         }
 
 
+    }
+
+    //para ver si podemos movernos, usamos un nombredescriptivo y que empiece por "is" ya que nos va a devolver un bool, se podrá mover o no
+    //le ponemos dos valores que necesitaremos x e y
+    bool IsPossibleMove(float xDirection, float yDirection)
+    {
+        //creamos la vable que indicará si nos podemos mover
+        bool isPossibleMove = false;
+
+
+        //guardamos la posición del player en un vector2
+        Vector2 currentposition = transform.position;
+        //creamos un vector2 con la dirección que toma el player(arriba, abajo, izda o dcha) con las variables de la funcion [(1,0), (0,1), (-1,0),(0,-1)
+        Vector2 direction = new Vector2 (xDirection, yDirection);
+
+        //desactivamos el collider para que no colisione el rayo con el collider del personaje
+        colaider.enabled = false;
+        
+        //para lanzar el raycast creamos la variable y luego comprobamos si tiene algo o no
+        RaycastHit2D rayo = Physics2D.Raycast(currentposition, direction, 1, mascararaycast);
+        Debug.DrawRay(currentposition, direction, Color.yellow);
+        //activamos el collider
+        colaider.enabled = true;
+
+        //para saber si el rayo ha chocado con algo, el raycastHit guarda un transform que no sindica con qué ha chocado
+        if(rayo.transform)//ha chocado contra algo que tiene el layermask indicado
+        {
+            isPossibleMove = true;
+        }
+
+        return isPossibleMove;
+    }
+
+
+    void NomepuedoMover(float xDirection, float yDirection)
+    {
+        //vamos a comprobar si hay un muro destructible, si lo hay, atacamos al muro. Con un linecast
+         
+        Vector2 currentposition = transform.position;
+        Vector2 posicionfinal = new Vector2(xDirection, yDirection) + currentposition;
+        colaider.enabled = false;
+        RaycastHit2D rayo = Physics2D.Linecast(currentposition, posicionfinal, mascararaycast);
+        Debug.DrawLine(currentposition, posicionfinal, Color.blue);
+        colaider.enabled = true;
+
+        if (rayo.transform)
+        {
+            if(rayo.transform.CompareTag("Wall"))
+            {
+                //creamos funcion para atacar muro
+                //AtacarMuro()
+
+            }
+        }
     }
 }
