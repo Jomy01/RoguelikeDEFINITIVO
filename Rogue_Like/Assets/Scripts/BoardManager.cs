@@ -14,7 +14,7 @@ public class BoardManager : MonoBehaviour
     public GameObject exit;
     public GameObject player;   
 
-
+// test
     public int columns = 8;
     public int rows = 8;
     //aquí guardamos las posiciones válidas del tablero, para recorrerlas usaremos dos bucles (for), inicializamos la lista = new list<>()
