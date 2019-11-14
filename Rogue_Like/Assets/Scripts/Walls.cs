@@ -14,7 +14,7 @@ public class Walls : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
+    //al llamar a esta función le indicaremos cuál es el valor de damage, por si es atacado por distitnos personajes, armas,...
     public void DamageWall(int damage)
     {
         //tiene que cambiar el sprite por el sprite dañado

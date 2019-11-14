@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 Debug.Log("No me puedo mover");
-                //NomepuedoMover(x, y)
+                NomepuedoMover(x, y);
             }
             ComprobarSiGameOver();
             gameManager.playerTurn = false;
@@ -125,11 +125,16 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D rayo = Physics2D.Linecast(currentposition, posicionfinal, mascararaycast);
         Debug.DrawLine(currentposition, posicionfinal, Color.blue);
         colaider.enabled = true;
-
+        //rayo almacena el objeto contra el que ha chocado el raycast
+        //si en la vble rayo tenemos algo (ha chocado con algo)
         if (rayo.transform)
         {
             if(rayo.transform.CompareTag("Wall"))
             {
+                //el objeto contra el que ha chocado el rayo es:
+                // rayo.transform.gameObject;
+                //queremos que coja el gameobject con el que ha chocado, tome su script Walls y llame a la función DamageWall
+                rayo.transform.gameObject.GetComponent<Walls>().DamageWall(1);
                 //creamos funcion para atacar muro
                 //AtacarMuro()
 
