@@ -253,7 +253,7 @@ MonoBehaviour:
   - {fileID: 8076780841281527587, guid: 9f19580bc97bf5c49bfb1e24e9347a69, type: 3}
   - {fileID: 2591837162000886763, guid: 5ded6a4a18732f24292a78c87f41775b, type: 3}
   exit: {fileID: 7476121138949638444, guid: 47d0486966db3ec4aafb590eadf890fd, type: 3}
-  player: {fileID: 8816617378536314224, guid: 3acd40a723e90304d8e699b62c6d90d7, type: 3}
+  player: {fileID: 3830071128155888244, guid: 3acd40a723e90304d8e699b62c6d90d7, type: 3}
   columns: 8
   rows: 8
   gridPositions: []
