@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public int pointsPerFood = 10;
     public int PointsPerSoda = 20;
     //para acceder al GameManager.cs para acceder a los puntos de comida
-     public GameManager gameManager;
+     GameManager gameManager;
     //para arrastrar el gamemanager directamente
     //public GameObject gameManager;
     //gameManager = GameObject.FindWithTag ("GameController");
@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //cargamos el script gamemanager en tiempo de ejecucion
+        gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         currentFoodPoints = gameManager.playerFood;//carga los putnos de comida iniciales
         animator = GetComponent<Animator>();
         colaider = GetComponent<BoxCollider2D>();
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
     {
         if (gameManager.playerTurn)
         {
+            Debug.Log("Es mi turno");
             //intento moverme
             IntentarMoverme();
         }
@@ -69,7 +72,7 @@ public class PlayerController : MonoBehaviour
            if( IsPossibleMove(x, y))
             {
                 Debug.Log("Me puedo mover");
-                //Moverme(x, y)
+                Moverme(x, y);
             }
             else
             {
@@ -88,7 +91,7 @@ public class PlayerController : MonoBehaviour
     bool IsPossibleMove(float xDirection, float yDirection)
     {
         //creamos la vable que indicará si nos podemos mover
-        bool isPossibleMove = false;
+        bool isPossibleMove = true;
 
 
         //guardamos la posición del player en un vector2
@@ -106,9 +109,10 @@ public class PlayerController : MonoBehaviour
         colaider.enabled = true;
 
         //para saber si el rayo ha chocado con algo, el raycastHit guarda un transform que no sindica con qué ha chocado
+        //si chocamos no nos podemos mover
         if(rayo.transform)//ha chocado contra algo que tiene el layermask indicado
         {
-            isPossibleMove = true;
+            isPossibleMove = false;
         }
 
         return isPossibleMove;
@@ -125,7 +129,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D rayo = Physics2D.Linecast(currentposition, posicionfinal, mascararaycast);
         Debug.DrawLine(currentposition, posicionfinal, Color.blue);
         colaider.enabled = true;
-        //rayo almacena el objeto contra el que ha chocado el raycast
+        //rayo almacena el objeto contra el que ha chocado el raycast y esta en layermask
         //si en la vble rayo tenemos algo (ha chocado con algo)
         if (rayo.transform)
         {
@@ -140,5 +144,46 @@ public class PlayerController : MonoBehaviour
 
             }
         }
+    }
+
+    void Moverme(float xDirection, float yDirection)
+    {
+        //posición en la que estoy
+        Vector2 currentposition = transform.position;
+        //posicion final,a la que voy=donde estoy más donde quiero ir
+        Vector2 posicionfinal = new Vector2(xDirection, yDirection) + currentposition;
+
+        Debug.Log("Moviendo player a la posisición: " + posicionfinal);
+        //llamamos a la corrutina
+        StartCoroutine(SmoothMovement(posicionfinal));
+
+    }
+        //Una corrutina es algo que se ejecuta de forma concurrente, se ejecuta primero el código princiapl, salta a la corrutina y vuelve, de esta manera
+        //no tiene que espera el código princiapl a que termine la corrutina (si un personaje tarda un segundo en desplazarse, el código no puede dejar de 
+        //ejecutarse ese tiempo, usamos una corrutina para el movimiento que se ejecuta, vuelve al principal y sigue moviendose
+        //protected IEnumerator indica que es un corrutina
+    protected IEnumerator SmoothMovement(Vector2 posicionfinal) //le pasamos a dónde queremos movernos
+    {
+        //la funcion MoveTowards desplaza el sprite poco a poco para evitar el teletransporte
+        //hacemos un bucle while y en cada iteración me acerco al objetivo, tenemos que hacer el bucle while hasta que casi hemos llegado, ya que la 
+        //funciónMoveTowards no llega exactamente al destino, tiene un pequeño error de cálculo de 0,0000algo
+        Vector2 remainingDistance = posicionfinal -(Vector2)transform.position;//convertimos transform.position de vector3 a vector2 para poder operar, sería lo mismo new vector2(transform.position.x, transform.position.y)
+        //magnitude calcula la distancia de un vector, su hipotenusa
+        float remainingDistanceLenght = remainingDistance.magnitude;
+        //ponemos le bucle while-> while (condición), cuando deje de cumplirse la condición salimos del bucle
+        while (remainingDistanceLenght > Mathf.Epsilon)// Mathf.Epsilon es un valor muy pequeño, menor que 0.01 y que ya viene en Unity)
+        {
+            //la siguiente posición a la que voy es la indicada por el vector resultante de ir del inicio al final a la velocidad*timedeltatime para que no afecte la velocidad de frames
+            Vector2 nextPosition = Vector2.MoveTowards(transform.position, posicionfinal, speed * Time.deltaTime);
+            transform.position = nextPosition;//actualizamos la posición inicial para seguir moviéndonos
+            //actualizamos la condicion haciendo una única línea de las líneas de arriba Vector2 remainingDistance y float remainingDistanceLenght
+            remainingDistanceLenght = (posicionfinal - (Vector2)transform.position).magnitude;
+
+
+        //devuelve el control al código principal
+        yield return null; 
+        }
+
+
     }
 }
