@@ -1,1 +1,4 @@
-sceneSetups: []
+sceneSetups:
+- path: Assets/Scenes/Rogue_like.unity
+  isLoaded: 1
+  isActive: 1
