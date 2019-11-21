@@ -184,6 +184,18 @@ public class PlayerController : MonoBehaviour
         yield return null; 
         }
 
+        //funcion para que cuando el enemigo ataque le quite vida, el int es el daño que nos hacen
+       
+    }
+
+
+    public void Hit(int losefood)
+    {
+        //currentfood = current - losefood
+        currentFoodPoints -= losefood;
+        animator.SetTrigger("Player hitted");
+        ComprobarSiGameOver();
 
     }
 }
+
