@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Rogue_like.unity
+- path: C:/Users/Alumno/Desktop/unity_j/Plataformas/Assets/Scenes/platforms.unity
   isLoaded: 1
   isActive: 1

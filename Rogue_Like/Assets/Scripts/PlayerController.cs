@@ -102,15 +102,15 @@ public class PlayerController : MonoBehaviour
         //desactivamos el collider para que no colisione el rayo con el collider del personaje
         colaider.enabled = false;
         
-        //para lanzar el raycast creamos la variable y luego comprobamos si tiene algo o no
+        //para lanzar el raycast creamos la variable y luego comprobamos si tiene algo o no, el rayo tiene una distancia de 1
         RaycastHit2D rayo = Physics2D.Raycast(currentposition, direction, 1, mascararaycast);
         Debug.DrawRay(currentposition, direction, Color.yellow);
         //activamos el collider
         colaider.enabled = true;
 
-        //para saber si el rayo ha chocado con algo, el raycastHit guarda un transform que no sindica con qué ha chocado
+        //para saber si el rayo ha chocado con algo, el raycastHit guarda un transform que nos indica con qué ha chocado
         //si chocamos no nos podemos mover
-        if(rayo.transform)//ha chocado contra algo que tiene el layermask indicado
+        if(rayo.transform)//ha chocado contra algo que tiene el layermask indicado, dentro del radio activado de 1
         {
             isPossibleMove = false;
         }
@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour
             remainingDistanceLenght = (posicionfinal - (Vector2)transform.position).magnitude;
 
 
-        //devuelve el control al código principal
+        //devuelve el control al código principal, de esta manera se ejecuta la corrutina, vuleve al código principal y entra a la corrutina hasta que acabe el bucle while que hemos puesto, una corrutina puede hacer que algo espere x segundo, por ejemplo
         yield return null; 
         }
 
