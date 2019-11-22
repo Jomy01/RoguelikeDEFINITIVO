@@ -38,7 +38,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+      
     }
 
     ///copiamos y pegamos partes del script del Player
@@ -173,7 +173,7 @@ public class Enemy : MonoBehaviour
     }
 
     //funcion para que se mueva el enemigo
-    void MoveEnemy()
+    public void MoveEnemy()
     {
         //declaramos la posición en x e y del jugador y enemigo
         float enemX = transform.position.x;
@@ -187,24 +187,105 @@ public class Enemy : MonoBehaviour
         //si la distancia en x es menor que en Y nos movemos en x
         if (distX < distY)
         {
+            Debug.Log("Calculando distancia");
             //si el player está más a la izda nos movemos a la izda
-            if (playerX < enemX) Moverme(-1, 0);
-            else Moverme(1, 0);
+            if (playerX < enemX)
+            {
+                Moverme(-1, 0);
+                //IntentarMoverme(-1, 0);
+            }
+            else
+            {
+                Moverme(1, 0);
+                //IntentarMoverme(1, 0);
+            }
         }
         //si la dist en x es mayor que en Y nos movemos en Y
         else
         {
             //si el player está más abajo nos movemos abajo
-            if (playerY < enemY) Moverme(0, -1);
-            else Moverme(0, 1);
+            if (playerY < enemY)
+            {
+                Moverme(0, -1);
+                //IntentarMoverme(0, -1);
+            }
+            else
+            {
+                Moverme(0, 1);
+                //IntentarMoverme(0, 1);
+            }
+
         }
 
 
-        /* float enemDistX = enemX.magnitude;
-         float enemDistY = enemY.magnitude;
-         float playerDistX = enemX.magnitude;
-         float playerDistY = enemY.magnitude;
-         */
+
+
+       // otro método para acercarse al player, mediante decisiones aleatorias
+         
+        /*void MoveEnemy()
+        {
+        Vector2 posicionEnemigo = transform.position;
+        Vector2 posicionPlayer = target.transform.position;
+
+        Vector2 distancia = posicionPlayer - posicionEnemigo;
+        // calcula las 4 posiciones posibles de movimiento del enemigo, para saber qué movimiento favorece más
+        Vector2 movDerecha = new Vector2(posicion.x + 1, posicion.y);
+        Vector2 movIzda = new Vector2(posicion.x - 1, posicion.y);
+        Vector2 movArriba = new Vector2(posicion.x , posicion.y+ 1);
+        Vector2 movDerecha = new Vector2(posicion.x, posicion.y - 1);
+
+        bool derecha = false;
+        bool arriba = false;
+
+        int aleatorio = Random.Range (0,2);
+
+        //comprobamos si la distancia es mayor que la pos del player - mover a ladcha en valor absoluto, si se cumple -> derecha = true
+        if(distancia.magnitude > (posicionPlayer - movDerecha).magnitude)
+        {
+        derecha = true;
+        }
+
+        else derecha = false;
+
+
+        if(distancia.magnitude > (posicionPlayer - movArriba).magnitude)
+        {
+        arriba = true;
+        }
+
+        else arriba = false;
+
+        if(aleatorio == 0) //x
+        {
+            if (derecha == true)
+            {
+            posicionDecidida = new Vector2 (1,0);
+            }
+            else 
+            {
+            posicionDecidida = new Vector2 (-1,0);
+            }
+        }
+
+        else    //y
+        {
+        if (arriba == true)
+        {
+            posicionDecidida = new Vector2 (0, 1)
+        }
+
+        else
+        {
+        posicionDecidida = new Vector2 (0,-1)
+        }
+
+        }
+
+    */
+    
+       // IntentarMoverme(posicionDecidida.x, posicionDecidida.y);
+          
+         
 
 
 
