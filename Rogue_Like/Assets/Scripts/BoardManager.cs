@@ -110,8 +110,11 @@ public class BoardManager : MonoBehaviour
         Vector2 exitPosition = new Vector2(columns-1, rows-1);
         Instantiate(exit, exitPosition, Quaternion.identity, _board.transform);
 
+        //desactivo para meter al player a mano
+        /*
         Vector2 playerPosition = new Vector2(0, 0);
         Instantiate (player, playerPosition, Quaternion.identity, _board.transform);
+        */
 
 
     }

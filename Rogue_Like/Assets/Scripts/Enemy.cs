@@ -109,7 +109,7 @@ public class Enemy : MonoBehaviour
 
     void NomepuedoMover(float xDirection, float yDirection)
     {
-        //vamos a comprobar si hay un muro destructible, si lo hay, atacamos al muro. Con un linecast
+        
 
         Vector2 currentposition = transform.position;
         Vector2 posicionfinal = new Vector2(xDirection, yDirection) + currentposition;
@@ -123,6 +123,7 @@ public class Enemy : MonoBehaviour
         {
             if (rayo.transform.CompareTag("Player"))
             {
+                Debug.Log("Ataca al jugador");
                 HitPlayer();             
 
             }
@@ -136,7 +137,7 @@ public class Enemy : MonoBehaviour
         //posicion final,a la que voy=donde estoy más donde quiero ir
         Vector2 posicionfinal = new Vector2(xDirection, yDirection) + currentposition;
 
-        Debug.Log("Moviendo enemigo a la posisición: " + posicionfinal);
+        //Debug.Log("Moviendo enemigo a la posisición: " + posicionfinal);
         //llamamos a la corrutina
         StartCoroutine(SmoothMovement(posicionfinal));
 
@@ -283,7 +284,7 @@ public class Enemy : MonoBehaviour
 
     */
     
-       // IntentarMoverme(posicionDecidida.x, posicionDecidida.y);
+       //Moverme(posicionDecidida.x, posicionDecidida.y);
           
          
 

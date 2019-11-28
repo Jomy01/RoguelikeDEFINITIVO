@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,12 +23,18 @@ public class PlayerController : MonoBehaviour
     //declaramos el collider para poder desactivarlo antes de lanzar el raycast y que no choque consigo mismo, lo activamos después de lanzarlo
     private BoxCollider2D colaider;
 
+    public Text food;
+
+    //variable para que no de error al llegar a la salida
+    public bool onExit = false;
+
     // Start is called before the first frame update
     void Start()
     {
         //cargamos el script gamemanager en tiempo de ejecucion
         gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         currentFoodPoints = gameManager.playerFood;//carga los putnos de comida iniciales
+        food.text = "Food: " + currentFoodPoints;
         animator = GetComponent<Animator>();
         colaider = GetComponent<BoxCollider2D>();
     }
@@ -38,6 +45,7 @@ public class PlayerController : MonoBehaviour
         if (gameManager.playerTurn)
         {
             Debug.Log("Es mi turno");
+            onExit = false;
             //intento moverme
             IntentarMoverme();
         }
@@ -68,6 +76,7 @@ public class PlayerController : MonoBehaviour
         if ( x != 0 || y != 0)
         {
             currentFoodPoints--;
+            food.text = "Food: " + currentFoodPoints;
             //comprobar si me puedo mover, si puedo, me muevo; tal vez pueda destruir un muro, le pasamos los valores de la x e y de IntentarMoverme, ya que hemos dicho que IsPossibleMove tiene dos variables
            if( IsPossibleMove(x, y))
             {
@@ -81,6 +90,7 @@ public class PlayerController : MonoBehaviour
             }
             ComprobarSiGameOver();
             gameManager.playerTurn = false;
+            gameManager.enemyTurn = true;
         }
 
 
@@ -104,6 +114,7 @@ public class PlayerController : MonoBehaviour
         
         //para lanzar el raycast creamos la variable y luego comprobamos si tiene algo o no, el rayo tiene una distancia de 1
         RaycastHit2D rayo = Physics2D.Raycast(currentposition, direction, 1, mascararaycast);
+        
         Debug.DrawRay(currentposition, direction, Color.yellow);
         //activamos el collider
         colaider.enabled = true;
@@ -171,7 +182,7 @@ public class PlayerController : MonoBehaviour
         //magnitude calcula la distancia de un vector, su hipotenusa
         float remainingDistanceLenght = remainingDistance.magnitude;
         //ponemos le bucle while-> while (condición), cuando deje de cumplirse la condición salimos del bucle
-        while (remainingDistanceLenght > Mathf.Epsilon)// Mathf.Epsilon es un valor muy pequeño, menor que 0.01 y que ya viene en Unity)
+        while (remainingDistanceLenght > Mathf.Epsilon && onExit == false)// Mathf.Epsilon es un valor muy pequeño, menor que 0.01 y que ya viene en Unity)
         {
             //la siguiente posición a la que voy es la indicada por el vector resultante de ir del inicio al final a la velocidad*timedeltatime para que no afecte la velocidad de frames
             Vector2 nextPosition = Vector2.MoveTowards(transform.position, posicionfinal, speed * Time.deltaTime);
@@ -193,9 +204,36 @@ public class PlayerController : MonoBehaviour
     {
         //currentfood = current - losefood
         currentFoodPoints -= losefood;
+        food.text = "Food: " + currentFoodPoints;
         animator.SetTrigger("Player hitted");
         ComprobarSiGameOver();
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.transform.CompareTag("Exit"))
+        {
+            gameManager.NextLevel();
+            transform.position = Vector2.zero;//nos llevamos al player al (0,0) = new Vector2(0,0)
+            collision.gameObject.SetActive(false);
+            onExit = true;
+
+        }
+
+        else if (collision.transform.CompareTag("Food"))
+        {
+            currentFoodPoints += pointsPerFood;
+            food.text = "Food: " + currentFoodPoints;
+            collision.gameObject.SetActive(false);
+        }
+
+        else if (collision.transform.CompareTag("Soda"))
+        {
+            currentFoodPoints += PointsPerSoda;
+            food.text = "Food: " + currentFoodPoints;
+            collision.gameObject.SetActive(false);
+        }
     }
 }
 
