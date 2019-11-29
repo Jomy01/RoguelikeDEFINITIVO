@@ -25,6 +25,21 @@ public class PlayerController : MonoBehaviour
 
     public Text food;
 
+    //audio
+   
+    public AudioClip[] movClips;
+    public AudioClip[] eatClips;
+    public AudioClip[] drinkClips;
+    public AudioClip gameoverClip;
+    private Audio audioController;
+
+
+
+
+
+
+
+
     //variable para que no de error al llegar a la salida
     public bool onExit = false;
 
@@ -37,6 +52,7 @@ public class PlayerController : MonoBehaviour
         food.text = "Food: " + currentFoodPoints;
         animator = GetComponent<Animator>();
         colaider = GetComponent<BoxCollider2D>();
+        audioController = GameObject.Find("AudioController").GetComponent<Audio>();
     }
 
     // Update is called once per frame
@@ -53,7 +69,12 @@ public class PlayerController : MonoBehaviour
 
     void ComprobarSiGameOver()
     {
-        if (currentFoodPoints < 1) gameManager.GameOver();
+        if (currentFoodPoints < 1)
+        {
+            audioController.PlaySingle(gameoverClip);
+            audioController.StopMusic();
+            gameManager.GameOver();
+        }
     }
 
     private void IntentarMoverme()
@@ -150,6 +171,7 @@ public class PlayerController : MonoBehaviour
                 // rayo.transform.gameObject;
                 //queremos que coja el gameobject con el que ha chocado, tome su script Walls y llame a la función DamageWall
                 rayo.transform.gameObject.GetComponent<Walls>().DamageWall(1);
+                animator.SetTrigger("attack");
                 //creamos funcion para atacar muro
                 //AtacarMuro()
 
@@ -168,6 +190,8 @@ public class PlayerController : MonoBehaviour
         //llamamos a la corrutina
         StartCoroutine(SmoothMovement(posicionfinal));
 
+        audioController.PlayRandomClip(movClips);
+
     }
         //Una corrutina es algo que se ejecuta de forma concurrente, se ejecuta primero el código princiapl, salta a la corrutina y vuelve, de esta manera
         //no tiene que espera el código princiapl a que termine la corrutina (si un personaje tarda un segundo en desplazarse, el código no puede dejar de 
@@ -182,7 +206,7 @@ public class PlayerController : MonoBehaviour
         //magnitude calcula la distancia de un vector, su hipotenusa
         float remainingDistanceLenght = remainingDistance.magnitude;
         //ponemos le bucle while-> while (condición), cuando deje de cumplirse la condición salimos del bucle
-        while (remainingDistanceLenght > Mathf.Epsilon && onExit == false)// Mathf.Epsilon es un valor muy pequeño, menor que 0.01 y que ya viene en Unity)
+        while (remainingDistanceLenght > Mathf.Epsilon && !onExit)// Mathf.Epsilon es un valor muy pequeño, menor que 0.01 y que ya viene en Unity)
         {
             //la siguiente posición a la que voy es la indicada por el vector resultante de ir del inicio al final a la velocidad*timedeltatime para que no afecte la velocidad de frames
             Vector2 nextPosition = Vector2.MoveTowards(transform.position, posicionfinal, speed * Time.deltaTime);
@@ -226,6 +250,7 @@ public class PlayerController : MonoBehaviour
             currentFoodPoints += pointsPerFood;
             food.text = "Food: " + currentFoodPoints;
             collision.gameObject.SetActive(false);
+            audioController.PlayRandomClip(eatClips);
         }
 
         else if (collision.transform.CompareTag("Soda"))
@@ -233,6 +258,7 @@ public class PlayerController : MonoBehaviour
             currentFoodPoints += PointsPerSoda;
             food.text = "Food: " + currentFoodPoints;
             collision.gameObject.SetActive(false);
+            audioController.PlayRandomClip(drinkClips);
         }
     }
 }

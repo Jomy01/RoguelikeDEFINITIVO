@@ -20,6 +20,12 @@ public class Enemy : MonoBehaviour
     //el daño que quita el enemigo
     public int damage = 5;
 
+
+    //audio
+
+    private Audio audioController;
+    public AudioClip[] attackClips;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +36,8 @@ public class Enemy : MonoBehaviour
         //cogemos el Animator de cada enemigo, cada uno coge el suyo ya que cada uno llevará este script y no tenemos que buscar en la escena
         animator = GetComponent<Animator>();
         colaider = GetComponent<BoxCollider2D>();
-        
+        audioController = GameObject.Find("AudioController").GetComponent<Audio>();
+
     }
 
 
@@ -38,7 +45,14 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      
+        if (gameManager.enemyTurn)
+        {
+            Debug.Log("Es turno del enemigo");
+            
+            //intento moverme
+            //IntentarMoverme();
+        }
+
     }
 
     ///copiamos y pegamos partes del script del Player
@@ -82,7 +96,7 @@ public class Enemy : MonoBehaviour
         colaider.enabled = false;
 
         //para lanzar el raycast creamos la variable y luego comprobamos si tiene algo o no, el rayo tiene una distancia de 1
-        RaycastHit2D rayo = Physics2D.Raycast(currentposition, direction, 1, mascararaycast);
+        RaycastHit2D rayo = Physics2D.Raycast(currentposition, direction, 4, mascararaycast);
         Debug.DrawRay(currentposition, direction, Color.yellow);
         //activamos el collider
         colaider.enabled = true;
@@ -92,6 +106,7 @@ public class Enemy : MonoBehaviour
         if (rayo.transform)//ha chocado contra algo que tiene el layermask indicado, dentro del radio activado de 1
         {
             isPossibleMove = false;
+            Debug.Log("No deberia moverme");
         }
 
         return isPossibleMove;
@@ -104,6 +119,7 @@ public class Enemy : MonoBehaviour
         //para atacar al Player creamos una funcion en el Player controller para quitarle vida (food)
         //ya tenemos el targer buscado en el start, cogemos su script y llamamos a la función Hit y le decimos que le quite damage unidades de comida
         target.GetComponent<PlayerController>().Hit(damage);
+        audioController.PlayRandomClip(attackClips);
     }
 
 
@@ -124,10 +140,11 @@ public class Enemy : MonoBehaviour
             if (rayo.transform.CompareTag("Player"))
             {
                 Debug.Log("Ataca al jugador");
-                HitPlayer();             
+                HitPlayer();
 
             }
         }
+        else Moverme(xDirection, yDirection);
     }
     //lo dejamos igual a lo escrito en el PLAYER
     void Moverme(float xDirection, float yDirection)
@@ -172,7 +189,7 @@ public class Enemy : MonoBehaviour
 
 
     }
-
+    /*
     //funcion para que se mueva el enemigo
     public void MoveEnemy()
     {
@@ -192,12 +209,12 @@ public class Enemy : MonoBehaviour
             //si el player está más a la izda nos movemos a la izda
             if (playerX < enemX)
             {
-                Moverme(-1, 0);
+                IntentarMoverme(-1, 0);
                 //IntentarMoverme(-1, 0);
             }
             else
             {
-                Moverme(1, 0);
+                IntentarMoverme(1, 0);
                 //IntentarMoverme(1, 0);
             }
         }
@@ -207,33 +224,33 @@ public class Enemy : MonoBehaviour
             //si el player está más abajo nos movemos abajo
             if (playerY < enemY)
             {
-                Moverme(0, -1);
+                IntentarMoverme(0, -1);
                 //IntentarMoverme(0, -1);
             }
             else
             {
-                Moverme(0, 1);
+                IntentarMoverme(0, 1);
                 //IntentarMoverme(0, 1);
             }
 
-        }
+        }*/
 
 
 
 
        // otro método para acercarse al player, mediante decisiones aleatorias
          
-        /*void MoveEnemy()
+        public void MoveEnemy()
         {
         Vector2 posicionEnemigo = transform.position;
         Vector2 posicionPlayer = target.transform.position;
 
         Vector2 distancia = posicionPlayer - posicionEnemigo;
         // calcula las 4 posiciones posibles de movimiento del enemigo, para saber qué movimiento favorece más
-        Vector2 movDerecha = new Vector2(posicion.x + 1, posicion.y);
-        Vector2 movIzda = new Vector2(posicion.x - 1, posicion.y);
-        Vector2 movArriba = new Vector2(posicion.x , posicion.y+ 1);
-        Vector2 movDerecha = new Vector2(posicion.x, posicion.y - 1);
+        Vector2 movDerecha = new Vector2(posicionEnemigo.x + 1, posicionEnemigo.y);
+        Vector2 movIzda = new Vector2(posicionEnemigo.x - 1, posicionEnemigo.y);
+        Vector2 movArriba = new Vector2(posicionEnemigo.x , posicionEnemigo.y+ 1);
+        Vector2 movAbajo = new Vector2(posicionEnemigo.x, posicionEnemigo.y - 1);
 
         bool derecha = false;
         bool arriba = false;
@@ -256,6 +273,8 @@ public class Enemy : MonoBehaviour
 
         else arriba = false;
 
+        Vector2 posicionDecidida;
+
         if(aleatorio == 0) //x
         {
             if (derecha == true)
@@ -272,19 +291,19 @@ public class Enemy : MonoBehaviour
         {
         if (arriba == true)
         {
-            posicionDecidida = new Vector2 (0, 1)
+                posicionDecidida = new Vector2(0, 1);
         }
 
         else
         {
-        posicionDecidida = new Vector2 (0,-1)
+                posicionDecidida = new Vector2(0, -1);
         }
 
         }
+        IntentarMoverme(posicionDecidida.x, posicionDecidida.y);
 
-    */
     
-       //Moverme(posicionDecidida.x, posicionDecidida.y);
+    
           
          
 

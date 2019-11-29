@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     //creamos esta bool para que la corrutina no se ejecute indefinidamente
     public bool enemyTurn = false;
 
-    public float enemyDelay = 1;
+    public float enemyDelay = 0.05f;
 
     private int level = 3;
 
@@ -62,9 +62,9 @@ public class GameManager : MonoBehaviour
         //recorremos la lista
         for (int i = 0; i < enemies.Length; i++)
         {
-            yield return new WaitForSeconds(enemyDelay);
             //cogemos el script Enemy y llamamos la funcion MoveEnemy
             enemies[i].GetComponent<Enemy>().MoveEnemy();
+            yield return new WaitForSeconds(enemyDelay);
         }
         playerTurn = true;
 
